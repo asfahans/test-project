@@ -5,6 +5,7 @@ import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import connectDB from './config/db.js';
 import ticketRoutes from './routes/ticketRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import vesselRoutes from './routes/vesselRoutes.js';
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/vessels', vesselRoutes);
 
 // Middleware
 

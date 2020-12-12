@@ -2,6 +2,10 @@ import mongoose from 'mongoose';
 
 const replySchema = mongoose.Schema(
   {
+    replyNumber: {
+      type: Number,
+      default: 1,
+    },
     title: {
       type: String,
       required: true,
@@ -17,6 +21,16 @@ const replySchema = mongoose.Schema(
     department: {
       type: String,
       required: true,
+    },
+    isAssistant: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    isApproved: {
+      type: Boolean,
+      required: true,
+      default: true,
     },
     replyText: {
       type: String,
@@ -42,17 +56,21 @@ const ticketSchema = mongoose.Schema(
       required: true,
       ref: 'User',
     },
+    ticketNumber: {
+      type: Number,
+      default: 1,
+    },
     toTitle: {
       type: String,
-      required: true,
+      //required: true,
     },
     toName: {
       type: String,
-      required: true,
+      //required: true,
     },
     toDesignation: {
       type: String,
-      required: true,
+      //required: true,
     },
     toDepartment: {
       type: String,
@@ -74,6 +92,7 @@ const ticketSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+
     vessel: {
       type: String,
       required: true,
@@ -87,6 +106,11 @@ const ticketSchema = mongoose.Schema(
       required: true,
     },
     isImportant: {
+      type: Boolean,
+      default: false,
+    },
+
+    isClosed: {
       type: Boolean,
       default: false,
     },

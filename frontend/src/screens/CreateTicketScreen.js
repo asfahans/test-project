@@ -1,145 +1,342 @@
 import React, { useState, useEffect } from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import { Form, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../components/Message';
-import Loader from '../components/Loader';
+// import Loader from '../components/Loader';
 import FormContainer from '../components/FormContainer';
-import { register } from '../actions/userActions';
+import { createTicket } from '../actions/ticketActions';
+import { listVessels } from '../actions/vesselActions';
+import { motion } from 'framer-motion';
 
 const CreateTicketScreen = ({ location, history }) => {
+  const descriptionLS = () => {
+    if (typeof Window === 'undefined') {
+      return '';
+    }
+    if (localStorage.getItem('description')) {
+      return JSON.parse(localStorage.getItem('description'));
+    } else {
+      return '';
+    }
+  };
+
   const [toDesignation, setToDesignation] = useState('');
-  const [toDepartment, setToDepartment] = useState('');
-  const [fromTitle, setFromTitle] = useState('');
-  const [fromName, setFromName] = useState('');
-  const [fromDesignation, setFromDesignation] = useState('');
-  const [fromDepartment, setFromDepartment] = useState(false);
+  const [toDepartment, setToDepartment] = useState('Onboard');
   const [vessel, setVessel] = useState('');
   const [summary, setSummary] = useState('');
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState(descriptionLS());
   const [isImportant, setIsImportant] = useState(false);
+
+  const [message, setMessage] = useState({
+    toDesignation: '',
+    toDepartment: '',
+    vessel: '',
+    summary: '',
+    description: '',
+    message: null,
+  });
 
   const dispatch = useDispatch();
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
-  console.log(userInfo.assignedVessels);
+  const vesselList = useSelector((state) => state.vesselList);
+  const { vessels } = vesselList;
 
-  const redirect = location.search
-    ? location.search.split('=')[1]
-    : '/dashboard';
+  // const redirect = location.search
+  //   ? location.search.split('=')[1]
+  //   : '/dashboard';
 
   useEffect(() => {
-    // if (userInfo) {
-    //   history.push(redirect);
-    // }
-    setFromTitle(userInfo.title);
-    setFromDesignation(userInfo.designation);
-    setFromDepartment(userInfo.department);
-  }, [userInfo]);
+    if (!userInfo) {
+      history.push('/');
+    } else {
+      dispatch(listVessels());
+    }
+  }, [userInfo, history, dispatch]);
 
-  console.log(fromTitle);
-  console.log(fromDesignation);
-  console.log(fromDepartment);
   const submitHandler = (e) => {
     e.preventDefault();
+    if (userInfo.department === 'Onboard') {
+      if (
+        toDepartment === 'Onboard' &&
+        summary === '' &&
+        (!description || description === '<p><br></p>')
+      ) {
+        setMessage({
+          toDepartment: 'To department is required',
+          summary: 'Summary is required',
+          description: 'Description is required',
+        });
+        setShake(5);
+      } else if (toDepartment === 'Onboard') {
+        setMessage({
+          toDepartment: 'To department is required',
+        });
+        setShake(5);
+      } else if (summary === '') {
+        setMessage({
+          summary: 'Summary is required',
+        });
+        setShake(5);
+      } else if (!description || description === '<p><br></p>') {
+        setMessage({
+          description: 'Description is required',
+        });
+        setShake(5);
+      } else {
+        dispatch(
+          createTicket(
+            toDepartment,
+            toDesignation,
+            vessel,
+            summary,
+            description,
+            isImportant
+          )
+        );
+        setMessage({ message: 'Ticket created!' });
+        //dispatch({ type: 'TICKET_LIST_RESET' });
+        history.push('/dashboard');
+      }
+    } else {
+      if (
+        vessel === '' &&
+        toDesignation === '' &&
+        summary === '' &&
+        (!description || description === '<p><br></p>')
+      ) {
+        setMessage({
+          vessel: 'Vessel is required',
+          toDesignation: 'Designation is required',
+          summary: 'Summary is required',
+          description: 'Description is required',
+        });
+        setShake(5);
+      } else if (vessel === '') {
+        setMessage({
+          vessel: 'Vessel is required',
+        });
+        setShake(5);
+      } else if (toDesignation === '') {
+        setMessage({
+          toDesignation: 'Designation is required',
+        });
+        setShake(5);
+      } else if (summary === '') {
+        setMessage({
+          summary: 'Summary is required',
+        });
+        setShake(5);
+      } else if (!description || description === '<p><br></p>') {
+        setMessage({
+          description: 'Description is required',
+        });
+        setShake(5);
+      } else {
+        dispatch(
+          createTicket(
+            toDepartment,
+            toDesignation,
+            vessel,
+            summary,
+            description,
+            isImportant
+          )
+        );
+        setMessage({ message: 'Ticket created!' });
+        //dispatch({ type: 'TICKET_LIST_RESET' });
+        history.push('/dashboard');
+      }
+    }
   };
 
+  const handleDescription = (e) => {
+    setDescription(e);
+    if (typeof Window !== 'undefined') {
+      localStorage.setItem('description', JSON.stringify(e));
+    }
+  };
+
+  /* Animation */
+  const [shake, setShake] = useState(0);
+  const errorVariants = {
+    x: shake,
+    transition: { yoyo: 3, duration: 0.1 },
+  };
+  /*END: Animation */
+
   return (
-    <FormContainer>
-      <h1>Create Ticket</h1>
-      {/* {message && <Message variant='danger'>{message}</Message>}
-      {error && <Message variant='danger'>{error}</Message>}
-      {loading && <Loader />} */}
+    <motion.div
+      initial={{ y: -5, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.1 }}
+    >
+      <FormContainer>
+        <h4 className='mb-3'>Create a ticket</h4>
+        {message.message && <Message variant='info'>{message.message}</Message>}
+        {/* {error && <Message variant='danger'>{error}</Message>} */}
+        {/* {loading && <Loader />} */}
 
-      <Form onSubmit={submitHandler}>
-        {userInfo.department === 'Onboard' ? (
-          <Form.Group controlId='toDepartment'>
-            <Form.Label>To Department</Form.Label>
-            <Form.Control
-              as='select'
-              value={toDepartment}
-              onChange={(e) => setToDepartment(e.target.value)}
-            >
-              <option value='Technical'>Technical</option>
-              <option value='Crew'>Crew</option>
-              <option value='Commercial'>Commercial</option>
-              <option value='IT Support'>IT Support</option>
-            </Form.Control>
-          </Form.Group>
-        ) : (
-          <>
+        <Form onSubmit={submitHandler}>
+          {userInfo && userInfo.department === 'Onboard' ? (
             <Form.Group controlId='toDepartment'>
-              <Form.Label>Vessel</Form.Label>
+              <Form.Label>To Department</Form.Label>
               <Form.Control
                 as='select'
-                value={vessel}
-                onChange={(e) => setVessel(e.target.value)}
+                custom
+                value={toDepartment}
+                onChange={(e) => setToDepartment(e.target.value)}
+                className={message.toDepartment && `is-invalid`}
               >
-                <option value='The Able'>The Able</option>
-                <option value='The Wise'>The Wise</option>
-                <option value='The Guardian'>The Guardian</option>
-                <option value='The Eternal'>The Eternal</option>
-                <option value='The Holy'>The Holy</option>
-                <option value='The Loving'>The Loving</option>
-                <option value='The Strong'>The Strong</option>
-                <option value='The Living'>The Living</option>
-                <option value='The Patron'>The Patron</option>
-                <option value='The Merciful'>The Merciful</option>
-                <option value='The Unity'>The Unity</option>
-                <option value='The Giver'>The Giver</option>
+                <option value='Onboard'>---------------------</option>
+                <option value='Technical Department'>
+                  Technical Department
+                </option>
+                <option value='Crewing Department'>Crewing Department</option>
+                <option value='Commercial Department'>
+                  Commercial Department
+                </option>
+                <option value='IT Department'>IT Department</option>
               </Form.Control>
+              <motion.div animate={errorVariants} className='invalid-feedback'>
+                {message.toDepartment}
+              </motion.div>
             </Form.Group>
+          ) : (
+            <>
+              <Form.Group controlId='vessel'>
+                <Form.Label>Vessel</Form.Label>
+                <Form.Control
+                  as='select'
+                  value={vessel}
+                  onChange={(e) => setVessel(e.target.value)}
+                  className={message.vessel && `is-invalid`}
+                >
+                  <option value=''>---------------------</option>
+                  {/* {vessels.map((vessel) => (
+                    <option value={vessel.name} key={vessel._id}>
+                      {vessel.name}
+                    </option>
+                  ))} */}
 
-            <Form.Group controlId='toDesignation'>
-              <Form.Label>To Designation</Form.Label>
-              <Form.Control
-                as='select'
-                value={toDesignation}
-                onChange={(e) => setToDesignation(e.target.value)}
-              >
-                <option value='Master'>Master</option>
-                <option value='Chief Engineer'>Chief Engineer</option>
-              </Form.Control>
-            </Form.Group>
-          </>
-        )}
+                  {userInfo &&
+                    userInfo.assignedVessels.map((assignedVessel) => (
+                      <option
+                        value={assignedVessel.name}
+                        key={assignedVessel._id}
+                      >
+                        {assignedVessel.name}
+                      </option>
+                    ))}
+                </Form.Control>
+                <motion.div
+                  animate={errorVariants}
+                  className='invalid-feedback'
+                >
+                  {message.vessel}
+                </motion.div>
+              </Form.Group>
 
-        <Form.Group controlId='summary'>
-          <Form.Label>Summary</Form.Label>
-          <Form.Control
-            type='text'
-            placeholder='Summary'
-            value={summary}
-            onChange={(e) => setSummary(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
+              <Form.Group controlId='toDesignation'>
+                <Form.Check
+                  type='radio'
+                  inline
+                  label='Master'
+                  value='Master'
+                  onChange={(e) => setToDesignation(e.target.value)}
+                  name='toDesignation'
+                  className={message.toDesignation && `is-invalid`}
+                />
+                <Form.Check
+                  type='radio'
+                  inline
+                  label='Chief Engineer'
+                  value='Chief Engineer'
+                  onChange={(e) => setToDesignation(e.target.value)}
+                  name='toDesignation'
+                  className={message.toDesignation && `is-invalid`}
+                />
+                <motion.div
+                  animate={errorVariants}
+                  className='invalid-feedback'
+                >
+                  {message.toDesignation}
+                </motion.div>
+              </Form.Group>
+            </>
+          )}
 
-        <Form.Group controlId='description'>
-          <Form.Label>Description</Form.Label>
-          <Form.Control
-            type='text'
-            placeholder='description'
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
+          <Form.Group controlId='summary'>
+            <Form.Label>Summary</Form.Label>
+            <Form.Control
+              type='text'
+              autoComplete='off'
+              placeholder='Summary'
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
+              className={message.summary && `is-invalid`}
+            ></Form.Control>
+            <motion.div animate={errorVariants} className='invalid-feedback'>
+              {message.summary}
+            </motion.div>
+          </Form.Group>
 
-        <Form.Group controlId='isImportant'>
-          <Form.Check
-            type='checkbox'
-            label='Treat this email as High Priority'
-            checked={isImportant}
-            onChange={(e) => setIsImportant(e.target.checked)}
-          ></Form.Check>
-        </Form.Group>
+          <Form.Group controlId='description'>
+            <Form.Label>Description</Form.Label>
+            <ReactQuill
+              modules={CreateTicketScreen.modules}
+              formats={CreateTicketScreen.formats}
+              value={String(description)}
+              onChange={handleDescription}
+              className={message.description && `is-invalid`}
+            />
+            <motion.div animate={errorVariants} className='invalid-feedback'>
+              {message.description}
+            </motion.div>
+          </Form.Group>
 
-        <Button type='submit' variant='primary'>
-          Register
-        </Button>
-      </Form>
-    </FormContainer>
+          <Form.Group controlId='isImportant'>
+            <Form.Check
+              type='switch'
+              id='custom-switch'
+              label='Treat this email as High Priority'
+              checked={isImportant}
+              onChange={(e) => setIsImportant(e.target.checked)}
+            ></Form.Check>
+          </Form.Group>
+
+          <Button type='submit' variant='primary'>
+            Register
+          </Button>
+        </Form>
+      </FormContainer>
+    </motion.div>
   );
 };
+
+CreateTicketScreen.modules = {
+  toolbar: [
+    [{ header: [1, 2, 3, 4, 5, 6] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    ['link'],
+    ['clean'],
+  ],
+};
+
+CreateTicketScreen.formats = [
+  'header',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'list',
+  'bullet',
+  'link',
+];
 
 export default CreateTicketScreen;

@@ -18,25 +18,70 @@ const Header = ({ history }) => {
     <header>
       <Navbar bg='light' expand='lg' collapseOnSelect>
         <Container fluid>
-          <LinkContainer to='/'>
+          <LinkContainer to='/' className='mr-4'>
             <Navbar.Brand>
-              <strong>SNP Service Desk</strong>
+              <img
+                src='/img/SNP-Logo.png'
+                alt='SNP Shipping Services Pvt. Ltd.'
+                className='img-responsive logo mr-3'
+              />
+              <strong style={{ color: '#00509d' }}>SNP Service Desk</strong>
             </Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
-            <Nav className='mr-auto'>
-              <LinkContainer to='/dashboard'>
-                <Nav.Link>Dashboard</Nav.Link>
-              </LinkContainer>
-              <LinkContainer to='/create'>
-                <Nav.Link>Create</Nav.Link>
-              </LinkContainer>
-            </Nav>
+            {userInfo && (
+              <Nav className='mr-auto'>
+                <LinkContainer to='/dashboard'>
+                  <Nav.Link>Dashboard</Nav.Link>
+                </LinkContainer>
+                <LinkContainer to='/create'>
+                  <Nav.Link>Create</Nav.Link>
+                </LinkContainer>
+              </Nav>
+            )}
 
             <Nav className='ml-auto'>
+              {userInfo && userInfo.isAdmin && (
+                <NavDropdown title='Admin' id='adminmenu' alignRight>
+                  <LinkContainer to='/register'>
+                    <NavDropdown.Item>
+                      <i
+                        className='fas fa-user-plus'
+                        style={{ marginRight: '4px' }}
+                      ></i>{' '}
+                      Register
+                    </NavDropdown.Item>
+                  </LinkContainer>
+
+                  <LinkContainer to='/admin/userlist'>
+                    <NavDropdown.Item>
+                      <i
+                        className='fas fa-users'
+                        style={{ marginRight: '4px' }}
+                      ></i>{' '}
+                      Users
+                    </NavDropdown.Item>
+                  </LinkContainer>
+
+                  <LinkContainer to='/admin/ticketlist'>
+                    <NavDropdown.Item>
+                      <i
+                        className='fas fa-ticket-alt'
+                        style={{ marginRight: '4px' }}
+                      ></i>{' '}
+                      Tickets
+                    </NavDropdown.Item>
+                  </LinkContainer>
+                </NavDropdown>
+              )}
+
               {userInfo && (
-                <NavDropdown title={userInfo.name} id='username'>
+                <NavDropdown
+                  title={userInfo.title + ' ' + userInfo.name}
+                  id='username'
+                  alignRight
+                >
                   <LinkContainer to='/profile'>
                     <NavDropdown.Item>
                       <i
