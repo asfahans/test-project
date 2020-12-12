@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Avatar from 'react-avatar';
 import Moment from 'react-moment';
 import ReactQuill from 'react-quill';
@@ -33,6 +34,8 @@ const TicketScreen = ({ match, history }) => {
 
   const dispatch = useDispatch();
   const [replyText, setReplyText] = useState(replyTextLS());
+  const [attachment, setAttachment] = useState('');
+  const [uploading, setUploading] = useState(false);
 
   const ticketDetails = useSelector((state) => state.ticketDetails);
   const { loading, error, ticket } = ticketDetails;
@@ -97,6 +100,32 @@ const TicketScreen = ({ match, history }) => {
     successDisapproved,
   ]);
 
+  const uploadFileHandler = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('attachment', file);
+    setUploading(true);
+
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      };
+
+      const { data } = await axios.post('/api/upload', formData, config);
+
+      setAttachment(data);
+      setUploading(false);
+    } catch (error) {
+      setMessage({
+        attachment: 'Error while uploading the attachment!',
+      });
+      console.log(error);
+      setUploading(false);
+    }
+  };
+
   const submitHandler = (e) => {
     e.preventDefault();
 
@@ -106,8 +135,10 @@ const TicketScreen = ({ match, history }) => {
       });
       setShake(5);
     } else {
-      dispatch(createTicketReply(match.params.id, { replyText }));
+      dispatch(createTicketReply(match.params.id, { replyText, attachment }));
       setMessage({ replyText: '' });
+      setMessage({ attachment: '' });
+      setAttachment('');
     }
   };
 
@@ -331,9 +362,33 @@ const TicketScreen = ({ match, history }) => {
                     </ListGroup>
                   </Card>
                 </Col>
+                {ticket.attachment && (
+                  <Col>
+                    <Row>
+                      <div
+                        className='px-2 py-1 border border-primary rounded m-0 ml-3 mt-2 mb-0 text-primary'
+                        style={{}}
+                      >
+                        <i class='fas fa-paperclip mr-2'></i>
+
+                        <a
+                          href={`${ticket.attachment}`}
+                          target='_blank'
+                          rel='noreferrer'
+                        >
+                          Attachment:{' '}
+                          {ticket.attachment
+                            .substr(ticket.attachment.lastIndexOf('.') + 1)
+                            .toUpperCase()}{' '}
+                          file
+                        </a>
+                      </div>
+                    </Row>
+                  </Col>
+                )}
 
                 <br />
-                <Col className='pr-4 mt-3'>
+                <Col className='pr-4 mt-1'>
                   <Row>
                     <Col md={10} className='border-bottom pb-2 mt-4'>
                       <i className='far fa-comments'></i>
@@ -442,6 +497,32 @@ const TicketScreen = ({ match, history }) => {
                               </span>
                             </Col>
                           </Row>
+                          {reply.attachment && (
+                            <Col>
+                              <Row>
+                                <div
+                                  className='px-2 py-1 border border-primary rounded m-0 ml-5 mt-2 mb-0 text-primary'
+                                  style={{}}
+                                >
+                                  <i class='fas fa-paperclip mr-2'></i>
+
+                                  <a
+                                    href={`${reply.attachment}`}
+                                    target='_blank'
+                                    rel='noreferrer'
+                                  >
+                                    Attachment:{' '}
+                                    {reply.attachment
+                                      .substr(
+                                        reply.attachment.lastIndexOf('.') + 1
+                                      )
+                                      .toUpperCase()}{' '}
+                                    file
+                                  </a>
+                                </div>
+                              </Row>
+                            </Col>
+                          )}
                           {loadingApproved && <Loader />}
                           {loadingDisapproved && <Loader />}
                           {!reply.isApproved & (reply.user !== userInfo._id) ? (
@@ -501,6 +582,29 @@ const TicketScreen = ({ match, history }) => {
                             >
                               {message.replyText}
                             </motion.div>
+
+                            <Form.Group
+                              controlId='attachment'
+                              className='mt-4'
+                              style={{ width: 250 }}
+                            >
+                              <Form.File
+                                id='image-file'
+                                label='Attachment'
+                                custom
+                                autoComplete='off'
+                                onChange={uploadFileHandler}
+                                className={message.attachment && `is-invalid`}
+                              ></Form.File>
+                              <motion.div
+                                animate={errorVariants}
+                                className='invalid-feedback'
+                              >
+                                {message.attachment}
+                              </motion.div>
+                              {uploading && <Loader />}
+                            </Form.Group>
+
                             <Button
                               type='Submit'
                               variant='primary'

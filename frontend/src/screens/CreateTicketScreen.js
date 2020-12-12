@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { Form, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../components/Message';
-// import Loader from '../components/Loader';
+import Loader from '../components/Loader';
 import FormContainer from '../components/FormContainer';
 import { createTicket } from '../actions/ticketActions';
-import { listVessels } from '../actions/vesselActions';
+//import { listVessels } from '../actions/vesselActions';
 import { motion } from 'framer-motion';
 
 const CreateTicketScreen = ({ location, history }) => {
@@ -28,6 +29,8 @@ const CreateTicketScreen = ({ location, history }) => {
   const [summary, setSummary] = useState('');
   const [description, setDescription] = useState(descriptionLS());
   const [isImportant, setIsImportant] = useState(false);
+  const [attachment, setAttachment] = useState('');
+  const [uploading, setUploading] = useState(false);
 
   const [message, setMessage] = useState({
     toDesignation: '',
@@ -43,8 +46,8 @@ const CreateTicketScreen = ({ location, history }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
-  const vesselList = useSelector((state) => state.vesselList);
-  const { vessels } = vesselList;
+  // const vesselList = useSelector((state) => state.vesselList);
+  // const { vessels } = vesselList;
 
   // const redirect = location.search
   //   ? location.search.split('=')[1]
@@ -53,10 +56,37 @@ const CreateTicketScreen = ({ location, history }) => {
   useEffect(() => {
     if (!userInfo) {
       history.push('/');
-    } else {
-      dispatch(listVessels());
     }
-  }, [userInfo, history, dispatch]);
+    // else {
+    //   dispatch(listVessels());
+    // }
+  }, [userInfo, history]);
+
+  const uploadFileHandler = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('attachment', file);
+    setUploading(true);
+
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      };
+
+      const { data } = await axios.post('/api/upload', formData, config);
+
+      setAttachment(data);
+      setUploading(false);
+    } catch (error) {
+      setMessage({
+        attachment: 'Error while uploading the attachment!',
+      });
+      console.log(error);
+      setUploading(false);
+    }
+  };
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -95,7 +125,8 @@ const CreateTicketScreen = ({ location, history }) => {
             vessel,
             summary,
             description,
-            isImportant
+            isImportant,
+            attachment
           )
         );
         setMessage({ message: 'Ticket created!' });
@@ -144,7 +175,8 @@ const CreateTicketScreen = ({ location, history }) => {
             vessel,
             summary,
             description,
-            isImportant
+            isImportant,
+            attachment
           )
         );
         setMessage({ message: 'Ticket created!' });
@@ -297,6 +329,21 @@ const CreateTicketScreen = ({ location, history }) => {
             <motion.div animate={errorVariants} className='invalid-feedback'>
               {message.description}
             </motion.div>
+          </Form.Group>
+
+          <Form.Group controlId='attachment'>
+            <Form.File
+              id='image-file'
+              label='Attachment'
+              custom
+              autoComplete='off'
+              onChange={uploadFileHandler}
+              className={message.attachment && `is-invalid`}
+            ></Form.File>
+            <motion.div animate={errorVariants} className='invalid-feedback'>
+              {message.attachment}
+            </motion.div>
+            {uploading && <Loader />}
           </Form.Group>
 
           <Form.Group controlId='isImportant'>

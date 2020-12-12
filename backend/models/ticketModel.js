@@ -36,6 +36,9 @@ const replySchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    attachment: {
+      type: String,
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -109,10 +112,12 @@ const ticketSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-
     isClosed: {
       type: Boolean,
       default: false,
+    },
+    attachment: {
+      type: String,
     },
     replies: [replySchema],
   },

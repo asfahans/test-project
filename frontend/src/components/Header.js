@@ -25,7 +25,7 @@ const Header = ({ history }) => {
                 alt='SNP Shipping Services Pvt. Ltd.'
                 className='img-responsive logo mr-3'
               />
-              <strong style={{ color: '#00509d' }}>SNP Service Desk</strong>
+              <strong style={{ color: '#125fa9' }}>SNP Service Desk</strong>
             </Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />

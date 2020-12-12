@@ -183,7 +183,8 @@ export const createTicket = (
   vessel,
   summary,
   description,
-  isImportant
+  isImportant,
+  attachment
 ) => async (dispatch, getState) => {
   try {
     dispatch({ type: 'TICKET_CREATE_REQUEST' });
@@ -207,6 +208,7 @@ export const createTicket = (
         summary,
         description,
         isImportant,
+        attachment,
       },
       config
     );

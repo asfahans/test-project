@@ -325,7 +325,7 @@ const deleteTicket = asyncHandler(async (req, res) => {
 // @Route   POST /api/tickets/:id/replies
 // @access  Private
 const createTicketReply = asyncHandler(async (req, res) => {
-  const { replyText } = req.body;
+  const { replyText, attachment } = req.body;
 
   const ticket = await Ticket.findById(req.params.id);
 
@@ -343,6 +343,7 @@ const createTicketReply = asyncHandler(async (req, res) => {
       isAssistant: req.user.isAssistant,
       isApproved: req.user.isAssistant ? false : true,
       replyText,
+      attachment,
       user: req.user._id,
     };
 
@@ -390,6 +391,7 @@ const createTicket = asyncHandler(async (req, res) => {
     summary,
     description,
     isImportant,
+    attachment,
   } = req.body;
 
   if (toDepartment === 'Onboard') {
@@ -415,6 +417,7 @@ const createTicket = asyncHandler(async (req, res) => {
       summary,
       description,
       isImportant,
+      attachment,
     });
 
     // const createdTicket = await ticket.save();
@@ -442,6 +445,7 @@ const createTicket = asyncHandler(async (req, res) => {
       summary,
       description,
       isImportant,
+      attachment,
     });
     // const createdTicket = await ticket.save();
     res.status(201).json(ticket);
