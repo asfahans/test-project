@@ -476,7 +476,7 @@ const TicketScreen = ({ match, history }) => {
                           <Row>
                             <Col className='ml-5'>
                               <span className='text-muted'>
-                                <Moment format='ddd D MMM YYYY hh:mm'>
+                                <Moment format='ddd D MMM YYYY hh:mm a'>
                                   {reply.createdAt}
                                 </Moment>{' '}
                                 <i className='far fa-clock ml-1'></i>
