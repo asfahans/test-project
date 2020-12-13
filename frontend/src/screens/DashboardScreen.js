@@ -21,18 +21,27 @@ const DashboardScreen = ({ history, match }) => {
   const ticketList = useSelector((state) => state.ticketList);
   const { loading, error, tickets, pages, page, count } = ticketList;
 
+  const ticketCreate = useSelector((state) => state.ticketCreate);
+  const { success: successCreate } = ticketCreate;
+
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
   useEffect(() => {
     if (userInfo) {
       dispatch(listTickets(keyword, pageNumber));
-    } else if (!tickets) {
-      dispatch(listTickets(keyword, pageNumber));
     } else {
       history.push('/');
     }
-  }, [dispatch, history, userInfo, keyword, pageNumber]);
+
+    if (!tickets) {
+      dispatch(listTickets(keyword, pageNumber));
+    }
+
+    if (successCreate) {
+      dispatch(listTickets(keyword, pageNumber));
+    }
+  }, [dispatch, history, userInfo, keyword, pageNumber, successCreate]);
 
   return (
     <>

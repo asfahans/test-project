@@ -121,7 +121,6 @@ const TicketScreen = ({ match, history }) => {
       setMessage({
         attachment: 'Error while uploading the attachment!',
       });
-      console.log(error);
       setUploading(false);
     }
   };
@@ -143,16 +142,17 @@ const TicketScreen = ({ match, history }) => {
   };
 
   const initialsDepartment =
-    ticket.fromDepartment && ticket.fromDepartment
-      ? ticket.fromDepartment &&
+    ticket && ticket.fromDepartment
+      ? ticket &&
         ticket.fromDepartment
           .split(/\s/)
           .reduce((response, word) => (response += word.slice(0, 1)), '')
       : '';
 
   const initialsVessel =
-    ticket.vessel && ticket.vessel
-      ? ticket.vessel
+    ticket && ticket.vessel
+      ? ticket &&
+        ticket.vessel
           .split(/\s/)
           .reduce((response, word) => (response += word.slice(0, 1)), '')
       : '';
@@ -180,15 +180,15 @@ const TicketScreen = ({ match, history }) => {
     }
   };
 
-  const overdueDate = new Date(ticket.createdAt);
+  const overdueDate = new Date(ticket && ticket.createdAt);
   overdueDate.setDate(overdueDate.getDate() + 4);
   const currentDate = new Date();
 
-  const ticketDate = new Date(ticket.createdAt);
+  const ticketDate = new Date(ticket && ticket.createdAt);
   ticketDate.setDate(ticketDate.getDate() + 4);
 
   const replyDate = new Date(
-    ticket.replies.length > 0 ? ticket.replies[0].createdAt : ''
+    ticket && ticket.replies.length > 0 ? ticket.replies[0].createdAt : ''
   );
 
   /* Animation */
@@ -443,8 +443,7 @@ const TicketScreen = ({ match, history }) => {
                   )}
                   <ListGroup variant='flush'>
                     {ticket.replies.map((reply) =>
-                      (userInfo.department &&
-                        userInfo.department === 'Onboard') &
+                      (userInfo && userInfo.department === 'Onboard') &
                       !reply.isApproved ? (
                         ''
                       ) : (
@@ -523,7 +522,8 @@ const TicketScreen = ({ match, history }) => {
                           )}
                           {loadingApproved && <Loader />}
                           {loadingDisapproved && <Loader />}
-                          {!reply.isApproved & (reply.user !== userInfo._id) ? (
+                          {!reply.isApproved &
+                          (reply.user !== (userInfo && userInfo._id)) ? (
                             <Row>
                               <Col className='ml-5 text-right'>
                                 <Button
@@ -541,6 +541,20 @@ const TicketScreen = ({ match, history }) => {
                                 >
                                   Decline
                                 </Button>
+                              </Col>
+                            </Row>
+                          ) : (
+                            ''
+                          )}
+
+                          {!reply.isApproved &
+                          (reply.user === (userInfo && userInfo._id)) &
+                          (userInfo && userInfo.isAssistant) ? (
+                            <Row>
+                              <Col className='ml-5 text-right'>
+                                <span className='border border-warning px-2 py-1 rounded text-warning'>
+                                  Pending Approval
+                                </span>
                               </Col>
                             </Row>
                           ) : (
