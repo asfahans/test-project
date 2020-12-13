@@ -211,7 +211,12 @@ const ProfileScreen = ({ location, history, match }) => {
         </Row>
         <Row>
           <Col>
-            <Paginate pages={pages} page={page} pageName='Profile' />
+            <Paginate
+              pages={pages}
+              page={page}
+              pageName='Profile'
+              keyword={keyword ? keyword : ''}
+            />
           </Col>
           <Col className='text-right mr-0 pr-0'>
             <h5>{count} tickets</h5>

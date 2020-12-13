@@ -343,10 +343,9 @@ const TicketScreen = ({ match, history }) => {
                         </Row>
                         <Row>
                           <Col className='ml-5 text-muted'>
-                            <Moment format='ddd D MMM YYYY HH:MM'>
+                            <Moment format='ddd D MMM YYYY hh:mm a'>
                               {ticket.createdAt}
-                            </Moment>{' '}
-                            hrs
+                            </Moment>
                             <i className='far fa-clock ml-1'></i>
                           </Col>
                         </Row>
@@ -478,10 +477,9 @@ const TicketScreen = ({ match, history }) => {
                           <Row>
                             <Col className='ml-5'>
                               <span className='text-muted'>
-                                <Moment format='ddd D MMM YYYY HH:MM'>
+                                <Moment format='ddd D MMM YYYY hh:mm'>
                                   {reply.createdAt}
                                 </Moment>{' '}
-                                hrs
                                 <i className='far fa-clock ml-1'></i>
                               </span>
                             </Col>

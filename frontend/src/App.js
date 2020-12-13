@@ -26,12 +26,21 @@ const App = () => {
           <Route path='/admin/user/:id/edit' component={UserEditScreen} exact />
           <Route path='/admin/ticketlist' component={TicketListScreen} exact />
           {/* Dashboard Route */}
+          {/* Normal with Pagination */}
           <Route
             path='/dashboard/page/:pageNumber'
             component={DashboardScreen}
             exact
           />
+          {/* Search Pagination */}
+          <Route
+            path='/dashboard/:keyword/page/:pageNumber'
+            component={DashboardScreen}
+            exact
+          />
+          {/* Single page search */}
           <Route path='/dashboard/:keyword' component={DashboardScreen} exact />
+          {/* normal dashboard */}
           <Route path='/dashboard' component={DashboardScreen} exact />
           {/* END: Dashboard Route */}
 
@@ -41,11 +50,21 @@ const App = () => {
             component={ProfileScreen}
             exact
           />
+          <Route
+            path='/profile/:keyword/page/:pageNumber'
+            component={ProfileScreen}
+            exact
+          />
           <Route path='/profile/:keyword' component={ProfileScreen} exact />
           <Route path='/profile' component={ProfileScreen} exact />
           {/* END: My Tickets Route */}
           <Route
             path='/admin/ticketlist/page/:pageNumber'
+            component={TicketListScreen}
+            exact
+          />
+          <Route
+            path='/admin/ticketlist/:keyword/page/:pageNumber'
             component={TicketListScreen}
             exact
           />

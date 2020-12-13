@@ -357,7 +357,7 @@ const CreateTicketScreen = ({ location, history }) => {
           </Form.Group>
 
           <Button type='submit' variant='primary'>
-            Register
+            Create
           </Button>
         </Form>
       </FormContainer>

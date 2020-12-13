@@ -95,7 +95,12 @@ const DashboardScreen = ({ history, match }) => {
       </Row>
       <Row>
         <Col>
-          <Paginate pages={pages} page={page} pageName='Dashboard' />
+          <Paginate
+            pages={pages}
+            page={page}
+            pageName='Dashboard'
+            keyword={keyword ? keyword : ''}
+          />
         </Col>
         <Col className='text-right mr-0 pr-0'>
           <h5>{count} tickets</h5>

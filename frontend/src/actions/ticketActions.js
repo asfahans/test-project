@@ -220,9 +220,9 @@ export const createTicket = (
 
     localStorage.removeItem('description');
 
-    dispatch({
-      type: 'TICKET_LIST_RESET',
-    });
+    // dispatch({
+    //   type: 'TICKET_LIST_RESET',
+    // });
   } catch (error) {
     dispatch({
       type: 'TICKET_CREATE_FAIL',
