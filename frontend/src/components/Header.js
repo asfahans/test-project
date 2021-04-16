@@ -20,77 +20,20 @@ const Header = ({ history }) => {
         <Container fluid>
           <LinkContainer to='/' className='mr-4'>
             <Navbar.Brand>
-              <img
-                src='/img/SNP-Logo.png'
-                alt='SNP Shipping Services Pvt. Ltd.'
-                className='img-responsive logo mr-3'
-              />
-              <strong style={{ color: '#125fa9' }}>SNP Service Desk</strong>
+              <strong style={{ color: '#125fa9' }} className='ml-3'>
+                Test Project
+              </strong>
             </Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
-          <Navbar.Collapse id='basic-navbar-nav'>
-            {userInfo && (
-              <Nav className='mr-auto'>
-                <LinkContainer to='/dashboard'>
-                  <Nav.Link>Dashboard</Nav.Link>
-                </LinkContainer>
-                <LinkContainer to='/create'>
-                  <Nav.Link>Create</Nav.Link>
-                </LinkContainer>
-              </Nav>
-            )}
-
+          <Navbar.Collapse id='basic-navbar-nav' className='mr-3'>
             <Nav className='ml-auto'>
-              {userInfo && userInfo.isAdmin && (
-                <NavDropdown title='Admin' id='adminmenu' alignRight>
-                  <LinkContainer to='/register'>
-                    <NavDropdown.Item>
-                      <i
-                        className='fas fa-user-plus'
-                        style={{ marginRight: '4px' }}
-                      ></i>{' '}
-                      Register
-                    </NavDropdown.Item>
-                  </LinkContainer>
-
-                  <LinkContainer to='/admin/userlist'>
-                    <NavDropdown.Item>
-                      <i
-                        className='fas fa-users'
-                        style={{ marginRight: '4px' }}
-                      ></i>{' '}
-                      Users
-                    </NavDropdown.Item>
-                  </LinkContainer>
-
-                  <LinkContainer to='/admin/ticketlist'>
-                    <NavDropdown.Item>
-                      <i
-                        className='fas fa-ticket-alt'
-                        style={{ marginRight: '4px' }}
-                      ></i>{' '}
-                      Tickets
-                    </NavDropdown.Item>
-                  </LinkContainer>
-                </NavDropdown>
-              )}
-
               {userInfo && (
                 <NavDropdown
                   title={userInfo.title + ' ' + userInfo.name}
                   id='username'
                   alignRight
                 >
-                  <LinkContainer to='/profile'>
-                    <NavDropdown.Item>
-                      <i
-                        className='fas fa-user'
-                        style={{ marginRight: '4px' }}
-                      ></i>{' '}
-                      Profile
-                    </NavDropdown.Item>
-                  </LinkContainer>
                   <NavDropdown.Item onClick={logoutHandler}>
                     <i className='fas fa-sign-out-alt'></i> Sign out
                   </NavDropdown.Item>

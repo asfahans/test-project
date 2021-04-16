@@ -19,7 +19,7 @@ const LoginScreen = ({ location, history }) => {
 
   const redirect = location.search
     ? location.search.split('=')[1]
-    : '/dashboard';
+    : '/homescreen';
 
   useEffect(() => {
     if (userInfo) {
@@ -41,7 +41,7 @@ const LoginScreen = ({ location, history }) => {
     } else if (password === '') {
       setMessage({ password: 'Password is required' });
       setShake(5);
-    } else if (password.length < 6) {
+    } else if (password.length < 3) {
       setMessage({ password: 'Invalid password criteria' });
       setShake(5);
     } else {
@@ -65,7 +65,7 @@ const LoginScreen = ({ location, history }) => {
       transition={{ duration: 0.1 }}
     >
       <FormContainer>
-        <h4 className='mb-3'>Sign In</h4>
+        <h4 className='mb-3'>Login</h4>
         {error && <Message variant='danger'>{error}</Message>}
         {loading && <Loader />}
 
@@ -75,7 +75,7 @@ const LoginScreen = ({ location, history }) => {
             <Form.Control
               type='text'
               autoComplete='off'
-              placeholder='Enter your username'
+              placeholder="Enter your username as 'foo'"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className={message.username && `is-invalid`}
@@ -89,7 +89,7 @@ const LoginScreen = ({ location, history }) => {
             <Form.Label>Password</Form.Label>
             <Form.Control
               type='password'
-              placeholder='Enter your password'
+              placeholder="Enter your password as 'bar'"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={message.password && `is-invalid`}
@@ -100,7 +100,7 @@ const LoginScreen = ({ location, history }) => {
           </Form.Group>
 
           <Button type='submit' variant='primary'>
-            Sign In
+            Login
           </Button>
         </Form>
       </FormContainer>
