@@ -1,55 +1,20 @@
-// import React, { useEffect, useState } from 'react';
-// import { Row, Col, ListGroup, Card, Image } from 'react-bootstrap';
-// import axios from 'axios';
-
-// const HomeScreen = () => {
-//   const [posts, setPosts] = useState([]);
-
-//   useEffect(() => {
-//     axios
-//       .get('https://api.github.com/users')
-//       .then((res) => {
-//         setPosts(res.data);
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//       });
-//   }, []);
-
-//   return (
-//     <>
-//       <Row>
-//         <Col className='d-flex align-items-end pl-0'>
-//           <h4 className='ml-3 mb-2'>Contacts</h4>
-//         </Col>
-//       </Row>
-//       <Row>
-//         <Card style={{ width: '100%', margin: '10px' }}>
-//           <ListGroup variant='flush'>
-//             {posts.map((post) => (
-//               <ListGroup.Item action key={post.id}>
-//                 <Image src={post.avatar_url} roundedCircle height='40' />
-//                 <span className='ml-3' style={{ fontSize: '1.05rem' }}>
-//                   {post.login.charAt(0).toUpperCase() + post.login.substring(1)}
-//                 </span>{' '}
-//               </ListGroup.Item>
-//             ))}
-//           </ListGroup>
-//         </Card>
-//       </Row>
-//     </>
-//   );
-// };
-
-// export default HomeScreen;
-
 import React, { useEffect, useState } from 'react';
 import { Row, Col, ListGroup, Card, Image } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 
-const HomeScreen = () => {
+const HomeScreen = ({ history }) => {
   const [data, setData] = useState([]);
   let [page, setPage] = useState(1);
   const [loader, setLoader] = useState(true);
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
+  useEffect(() => {
+    if (!userInfo) {
+      history.push('/');
+    }
+  }, [history, userInfo]);
 
   useEffect(() => {
     fetchData(page);
